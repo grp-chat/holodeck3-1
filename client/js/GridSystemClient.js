@@ -280,17 +280,21 @@ class GridSystemClient {
     }
     renderFinishFlags() {
         this.finishFlags.forEach((flag) => {
+            this.outlineContext.fillStyle = "white";
             this.outlineContext.font = "17px Times New Roman";
             this.outlineContext.fillText("🏁", flag.x * (this.cellSize + this.padding) + 3,
                 flag.y * (this.cellSize + this.padding) + 21);
+        
+                console.log(this.padding)
+        
         });
     }
     setTopTitle() {
         this.uiContext.font = "20px Courier";
         this.uiContext.fillStyle = "white";
 
-        this.uiContext.fillText(`Holodeck 2-1`, 20, 30);
-        // this.uiContext.fillText(this.areaTitle, 20, 30);
+        //this.uiContext.fillText(`Holodeck 2-1`, 20, 30);
+        this.uiContext.fillText(this.areaTitle, 20, 30);
         //this.uiContext.canvas.style.border = "2px solid green";
 
     }
