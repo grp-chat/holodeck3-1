@@ -11,12 +11,9 @@ body {
   min-width: 360px;
   width: 100%;
   display: flex;
-  /* justify-content: center; */
-  /* align-items: center; */
   perspective: 1000px;
   perspective-origin: 50% 50%;
  
-  
 }
 
 @keyframes scroll {
@@ -38,7 +35,7 @@ body {
 }
 
 /* body{
-    background-color: #fff;
+    background-color: #111;
 } */
 
 .details {

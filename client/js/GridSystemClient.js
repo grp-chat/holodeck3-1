@@ -184,6 +184,7 @@ class GridSystemClient {
         //let color = "transparent";
         let playerId = null;
         let itemId = null;
+        let stunId = null;
 
         const getPlayerObject = this.playersArr.find(object => object.lable === cellVal);
         if (getPlayerObject) {
@@ -196,17 +197,22 @@ class GridSystemClient {
             } else if (getPlayerObject.invisible === true){
                 color = "#111";
             }
+
+            if (getPlayerObject.stunned === true) {
+                stunId = "💤"
+            }
             
             
         }
 
         const getItemObject = this.itemsArr.find(object => object.itemLable === cellVal);
-        if (getItemObject === undefined) return { color, playerId, itemId };
+        if (getItemObject === undefined) return { color, playerId, itemId, stunId };
         itemId = getItemObject.itemId;
         color = getItemObject.color;
 
-        return { color, playerId, itemId };
+        return { color, playerId, itemId, stunId };
     }
+
     renderBlankCell(cellDetail, row, col) {
         //this.outlineContext.globalAlpha = 0.2;
         //const fillStyle = "transparent";
@@ -236,6 +242,15 @@ class GridSystemClient {
             this.outlineContext.fillStyle = "#111";
             this.outlineContext.fillText(cellDetail.playerId, col * (this.cellSize + this.padding) + 1,
                 row * (this.cellSize + this.padding) + 18);
+
+            if (cellDetail.stunId === undefined) { return }
+            if (cellDetail.stunId === null) { return }
+            this.outlineContext.font = "19px Times New Roman";
+            //this.outlineContext.fillStyle = "rgba(255, 255, 255, 0.5)";
+            this.outlineContext.fillText(cellDetail.stunId, col * (this.cellSize + this.padding) + 1,
+                row * (this.cellSize + this.padding) + 10);
+
+                
         }
     }
     renderItems(cellDetail, row, col) {
@@ -284,8 +299,6 @@ class GridSystemClient {
             this.outlineContext.font = "17px Times New Roman";
             this.outlineContext.fillText("🏁", flag.x * (this.cellSize + this.padding) + 3,
                 flag.y * (this.cellSize + this.padding) + 21);
-        
-                console.log(this.padding)
         
         });
     }

@@ -83,16 +83,17 @@ class GridSystem {
         this.powerList = {
             1: {powerName: "invisibility", duration: 10000, offPowerName: "invisibilityOff", title: "Invisibility"},
             2: {powerName: "blink", title: "Blink"},
+            3: {powerName: "stun", title: "EMP Bomb"},
         }
         this.mapDefaultPowers = {
-            "area1": [this.powerList[2], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2]],
+            "area1": [this.powerList[3], this.powerList[3],this.powerList[3],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2]],
             "area2": [this.powerList[2], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[1],],
             "area3": [this.powerList[2], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2], this.powerList[1]],
         }
 
         this.startArea = "area1";
         this.defaultStartingPoints = {
-            "area1": {"p1": {x:31,y:19}, "p2": {x:15,y:5}, "p3": {x:14,y:5}, "p4": {x:10,y:1}, "p5": {x:9,y:1}, "p6": {x:8,y:1}, "p7": {x:7,y:5}, "p8": {x:7,y:1}, "p9": {x:1,y:2}, "p10": {x:1,y:3}, "p11": {x:1,y:4},},
+            "area1": {"p1": {x:21,y:5}, "p2": {x:15,y:5}, "p3": {x:14,y:5}, "p4": {x:10,y:1}, "p5": {x:9,y:1}, "p6": {x:8,y:1}, "p7": {x:7,y:5}, "p8": {x:7,y:1}, "p9": {x:1,y:2}, "p10": {x:1,y:3}, "p11": {x:1,y:4},},
             "area2": {"p1": {x:31,y:19}, "p2": {x:16,y:1}, "p3": {x:15,y:1}, "p4": {x:14,y:1}, "p5": {x:5,y:1}, "p6": {x:4,y:1}, "p7": {x:3,y:1}, "p8": {x:1,y:4}, "p9": {x:1,y:3}, "p10": {x:1,y:2}, "p11": {x:1,y:1},},
             "area3": {"p1": {x:32,y:19}, "p2": {x:8,y:6}, "p3": {x:7,y:6}, "p4": {x:6,y:6}, "p5": {x:5,y:6}, "p6": {x:4,y:6}, "p7": {x:3,y:6}, "p8": {x:2,y:6}, "p9": {x:1,y:3}, "p10": {x:1,y:4}, "p11": {x:1,y:5},},
             "area4": {"p1": {x:32,y:1}, "p2": {x:1,y:5}, "p3": {x:1,y:15}, "p4": {x:1,y:16}, "p5": {x:1,y:4}, "p6": {x:1,y:3}, "p7": {x:1,y:2}, "p8": {x:1,y:1}, "p9": {x:1,y:17}, "p10": {x:1,y:18}, "p11": {x:1,y:19},},
@@ -180,6 +181,8 @@ class GridSystem {
     }
     isValidMove(plyrSlot, x, y) {
         this.matrix = this.allMatrixes[plyrSlot.area].gridMatrix;
+
+        if (plyrSlot.stunned === true) return false;
 
         if(plyrSlot.y + y < 0) return false;
         if(plyrSlot.x + x < 0) return false;
@@ -580,7 +583,6 @@ io.sockets.on('connection', function (sock) {
         const selectedPower = parseInt(data.extractNum) - 1
 
         
-
         if(gridSystem[playerObjectKey].obtainedPowers[selectedPower] === undefined) return;
 
         const displayPowerTitle = gridSystem[playerObjectKey].obtainedPowers[selectedPower].title;
@@ -594,6 +596,34 @@ io.sockets.on('connection', function (sock) {
 
         
         if(gridSystem[playerObjectKey].canUsePower === false) return;
+
+        if (gridSystem[playerObjectKey].obtainedPowers[selectedPower].powerName === "stun") {
+            
+            gridSystem[playerObjectKey].obtainedPowers.splice(selectedPower, 1);
+
+            //gridSystem.p9.gotStunned();
+            gridSystem.playersArr.forEach(player => {
+                if (gridSystem[playerObjectKey].id != player.id && gridSystem[playerObjectKey].area === player.area) {
+                    const bombRange = 8;
+                    const rightRange = gridSystem[playerObjectKey].x + bombRange;
+                    const leftRange = gridSystem[playerObjectKey].x - bombRange;
+                    const upRange = gridSystem[playerObjectKey].y - bombRange;
+                    const downRange = gridSystem[playerObjectKey].y + bombRange;
+
+                    if (player.x > leftRange && player.x < rightRange && player.y > upRange && player.y < downRange ) {
+                        player.gotStunned();
+                        gridSystem.emitToUsers('sendMatrix');
+                        //console.log(`${player.id}: x:${player.x}, y:${player.y}, area:${player.area}`)
+                    }
+                }
+                
+            });
+            setTimeout(() => {
+                gridSystem.emitToUsers('sendMatrix');
+            }, 6000);
+
+            return;
+        }
 
 
         const word = gridSystem[playerObjectKey].obtainedPowers[selectedPower].powerName;

@@ -71,6 +71,8 @@ class localFreeCommand {
         if (this.prefix === `${nickname}: info`) {
             //loadObtainedPowersToModal();
             requestPowerArray();
+        } else if (this.prefix === `${nickname}: map`) {
+            loadMiniMapToModal();
         }
         this.localFunc();
     }
@@ -214,6 +216,7 @@ const allCommands = [
     new numAndIdCommand("TCR: use ", 'useItem'),
     new localFixedCommand("TCR: list", openModal),
     new localFreeCommand(nickname + ": info", openModal),
+    new localFreeCommand(nickname + ": map", openModal),
     new idCommand("TCR: go a2 ", 'teleportPlayerArea2'),
     new idCommand("TCR: go a1 ", 'teleportPlayerMainArea'),
     new idCommand("TCR: go a3 ", 'teleportPlayerArea3'),

@@ -199,6 +199,12 @@ function loadObtainedPowersToModal(powersArr, teamNum) {
         modalBody.innerHTML +=`${index + 1}: ${power.title} <br>`;
     });
 }
+function loadMiniMapToModal() {
+    
+    modalHeader.innerHTML = `Map`;
+    modalBody.innerHTML = "";
+    
+}
 function loadListToModal() {
     modalHeader.innerHTML = "Trigger list";
     modalBody.innerHTML = "";
@@ -212,10 +218,10 @@ function closeModal() {
     modal.classList.remove('active');
     overlay.classList.remove('active');
 }
-function updateModal(data) {
-    modalHeader.innerHTML = data.head;
-    modalBody.innerHTML = data.body;
-}
+// function updateModal(data) {
+//     modalHeader.innerHTML = data.head;
+//     modalBody.innerHTML = data.body;
+// }
 
 function clientRender(data) {
     const getPlayerObject = data.playersArr.find(object => object.id === nickname);
